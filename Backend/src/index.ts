@@ -124,12 +124,6 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const { title, completed } = req.body;
 
-    if (!title || title.trim() === "") {
-      return res.status(400).json({
-        message: "Title is required",
-      });
-    }
-
     const existingTask = await prisma.task.findUnique({
       where: { id },
     });
@@ -143,8 +137,12 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
     const updatedTask = await prisma.task.update({
       where: { id },
       data: {
-        title: title.trim(),
-        completed: completed ?? existingTask.completed,
+        title:
+          title !== undefined && title.trim() !== ""
+            ? title.trim()
+            : existingTask.title,
+        completed:
+          completed !== undefined ? completed : existingTask.completed,
       },
     });
 
