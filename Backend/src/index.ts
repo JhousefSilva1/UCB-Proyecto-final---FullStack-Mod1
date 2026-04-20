@@ -1,20 +1,17 @@
-const express = require("express");
-const cors = require("cors");
-const { PrismaClient } = require("@prisma/client");
-const { PrismaPg } = require("@prisma/adapter-pg");
-const jwt = require("jsonwebtoken");
-require("dotenv/config");
-
-type Request = import("express").Request;
-type Response = import("express").Response;
-type NextFunction = import("express").NextFunction;
-
+import express from "express";
+import type { Request, Response, NextFunction } from "express";
+import cors from "cors";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
 const app = express();
 const PORT = 3000;
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
+
 const prisma = new PrismaClient({ adapter });
 app.use(
   cors({
