@@ -7,14 +7,12 @@ type Props = {
   toggleTask: (task: Task) => void;
 };
 
-function TaskCard({ task, deleteTask, toggleTask }: Props): React.ReactElement {
+function TaskCard({ task, deleteTask, toggleTask }: Props) {
   const handleToggle = () => toggleTask(task);
   const handleDelete = () => deleteTask(task.id);
 
   return (
-    <li
-      className={`task-card ${task.completed ? "completed" : ""}`}
-    >
+    <li className={`task-card ${task.completed ? "completed" : ""}`}>
       <label className="task-left">
         <input
           type="checkbox"
@@ -23,7 +21,7 @@ function TaskCard({ task, deleteTask, toggleTask }: Props): React.ReactElement {
         />
 
         <span className={task.completed ? "text-done" : ""}>
-          {task.text}
+          {task.title}
         </span>
       </label>
 

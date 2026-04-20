@@ -8,6 +8,7 @@
   border-radius: 14px;
   transition: 0.2s;
   border: 1px solid #eee;
+  color: #000;
 }
 
 .task-card:hover {
