@@ -1,5 +1,4 @@
 import type { Task } from "../App";
-import { Trash2 } from "lucide-react";
 import "./TaskCard.css";
 
 type Props = {
@@ -34,7 +33,23 @@ function TaskCard({ task, deleteTask, toggleTask }: Props) {
         onClick={handleDelete}
         aria-label="Eliminar"
       >
-        <Trash2 size={16} />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M6 6l1 14h10l1-14" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
+        </svg>
       </button>
     </li>
   );
