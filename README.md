@@ -141,4 +141,4 @@ En la siguiente sesión se agregará el pipeline de GitHub Actions y el badge de
 
 ```md
 <!-- BADGE_CI -->
-```
+```# prueba de proteccion
