@@ -144,4 +144,3 @@ En la siguiente sesión se agregará el pipeline de GitHub Actions y el badge de
 ```# prueba de proteccion
 # prueba de proteccion 2026
 # prueba de proteccion test 2
-# prueba de protección
