@@ -22,7 +22,7 @@ app.use(express.json());
 app.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
 
-  if (username === "admin" && password === "123456") 
+  if (username === "admin" && password === "123456") {
     const token = jwt.sign(
       { username: username },
       SECRET_KEY,
