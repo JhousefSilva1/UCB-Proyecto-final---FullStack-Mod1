@@ -139,11 +139,4 @@ Este repositorio está preparado para trabajar con CI/CD.
 
 En la siguiente sesión se agregará el pipeline de GitHub Actions y el badge de estado será colocado en el marcador:
 
-```md
-<!-- BADGE_CI -->
-```# prueba de proteccion
-# prueba de proteccion 2026
-# prueba de proteccion test 2
-# prueba de protección 
-# prueba de proteccion 3
-# prueba de proteccion 5
+[![.github/workflows/ci.yml](https://github.com/JhousefSilva1/UCB-Proyecto-final---FullStack-Mod1/actions/workflows/ci.yml/badge.svg)](https://github.com/JhousefSilva1/UCB-Proyecto-final---FullStack-Mod1/actions/workflows/ci.yml)
