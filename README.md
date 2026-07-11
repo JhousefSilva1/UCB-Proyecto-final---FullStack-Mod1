@@ -8,6 +8,7 @@ El sistema está dividido en dos partes: un Backend para la lógica del servidor
 
 ## 🚀 Instalación local
 
+
 Clona el repositorio en tu máquina:
 
 ```bash
