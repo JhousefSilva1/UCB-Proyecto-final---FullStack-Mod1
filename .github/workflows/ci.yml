@@ -10,6 +10,13 @@ on:
     branches:
       - main
 
+  workflow_dispatch:
+    inputs:
+      confirmacion:
+        description: "Escribe DEPLOY para confirmar el despliegue a producción"
+        required: true
+        type: string
+
 jobs:
   pruebas:
     name: Pruebas con variables seguras
@@ -39,3 +46,38 @@ jobs:
 
       - name: Compilar backend
         run: npm run build
+
+  deploy-staging:
+    name: Deploy a Staging
+    needs: [pruebas]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Desplegar a Railway staging
+        run: railway up --service backend --environment staging --ci
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  deploy-production:
+    name: Deploy a Producción manual
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirmacion == 'DEPLOY'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Desplegar a Railway producción
+        run: railway up --service backend --environment production --ci
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
