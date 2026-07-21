@@ -61,13 +61,14 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Desplegar a Railway staging
-        run: railway up --service backend --environment staging --ci
+        run: railway up --service backend --ci
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_STAGING_TOKEN }}
 
   deploy-production:
     name: Deploy a Producción manual
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.confirmacion == 'DEPLOY'
+    needs: [pruebas]
+    if: github.event_name == 'workflow_dispatch' && inputs.confirmacion == 'DEPLOY'
     runs-on: ubuntu-latest
 
     steps:
@@ -78,6 +79,6 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Desplegar a Railway producción
-        run: railway up --service backend --environment production --ci
+        run: railway up --service backend --ci
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_PRODUCTION_TOKEN }}
