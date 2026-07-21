@@ -63,7 +63,7 @@ jobs:
       - name: Desplegar a Railway staging
         run: railway up --service backend --environment staging --ci
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN1 }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   deploy-production:
     name: Deploy a Producción manual
@@ -80,4 +80,4 @@ jobs:
       - name: Desplegar a Railway producción
         run: railway up --service backend --environment production --ci
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN1 }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
