@@ -17,7 +17,7 @@ const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
  * Se escribió DATABASE_URRL para provocar el incidente.
  */
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URRL!,
+ connectionString: process.env.DATABASE_URRL!,
 });
 
 const prisma = new PrismaClient({ adapter });
