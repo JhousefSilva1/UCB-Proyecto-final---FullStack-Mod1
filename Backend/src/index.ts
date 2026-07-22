@@ -11,8 +11,13 @@ const app = express();
 const PORT = Number(process.env.PORT) || 4001;
 const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
 
+/*
+ * ERROR INTENCIONAL PARA EL SIMULACRO:
+ * La variable correcta es DATABASE_URL.
+ * Se escribió DATABASE_URRL para provocar el incidente.
+ */
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
+  connectionString: process.env.DATABASE_URRL!,
 });
 
 const prisma = new PrismaClient({ adapter });
@@ -283,12 +288,6 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
     });
   }
 });
-
-/*
- * ERROR INTENCIONAL PARA EL SIMULACRO DE CAOS.
- * Esta excepción impide que el servidor arranque.
- */
-throw new Error("Fallo simulado");
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
