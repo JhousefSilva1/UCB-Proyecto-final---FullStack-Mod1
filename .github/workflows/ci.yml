@@ -61,7 +61,7 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Desplegar a Railway staging
-        run: railway up --service backend --ci
+        run: railway up --service UCB-Proyecto-final---FullStack-Mod1 --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_STAGING_TOKEN }}
 
@@ -79,6 +79,6 @@ jobs:
         run: npm install -g @railway/cli
 
       - name: Desplegar a Railway producción
-        run: railway up --service backend --ci
+        run: railway up --service UCB-Proyecto-final---FullStack-Mod1 --ci
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_PRODUCTION_TOKEN }}
