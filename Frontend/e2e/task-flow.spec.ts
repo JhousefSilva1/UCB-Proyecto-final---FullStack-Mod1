@@ -13,27 +13,65 @@ test.describe("Flujo completo de tareas", () => {
     await expect(addButton).toBeDisabled();
 
     await input.fill(taskName);
-
     await expect(addButton).toBeEnabled();
+
+    const createResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes("/tasks") &&
+        response.request().method() === "POST"
+    );
 
     await addButton.click();
 
-    const taskText = page.getByText(taskName);
+    const createResponse = await createResponsePromise;
 
-    await expect(taskText).toBeVisible();
+    expect(
+      createResponse.status(),
+      `El POST /tasks respondió con ${createResponse.status()}`
+    ).toBe(201);
 
     const taskCard = page.locator(".task-card").filter({
       hasText: taskName,
     });
 
+    await expect(taskCard).toBeVisible({ timeout: 10_000 });
+
     const checkbox = taskCard.getByRole("checkbox");
 
-    await checkbox.check();
+    const updateResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes("/tasks/") &&
+        response.request().method() === "PUT"
+    );
 
-    await expect(taskCard.getByText("Completado")).toBeVisible();
+    await checkbox.click();
+
+    const updateResponse = await updateResponsePromise;
+
+    expect(
+      updateResponse.status(),
+      `El PUT /tasks/:id respondió con ${updateResponse.status()}`
+    ).toBe(200);
+
+    await expect(taskCard.getByText("Completado")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    const deleteResponsePromise = page.waitForResponse(
+      (response) =>
+        response.url().includes("/tasks/") &&
+        response.request().method() === "DELETE"
+    );
 
     await taskCard.getByRole("button", { name: "Eliminar" }).click();
 
-    await expect(taskText).not.toBeVisible();
+    const deleteResponse = await deleteResponsePromise;
+
+    expect(
+      deleteResponse.status(),
+      `El DELETE /tasks/:id respondió con ${deleteResponse.status()}`
+    ).toBe(200);
+
+    await expect(taskCard).not.toBeVisible();
   });
 });
