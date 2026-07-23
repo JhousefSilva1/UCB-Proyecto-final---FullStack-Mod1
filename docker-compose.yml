@@ -17,7 +17,7 @@ services:
       retries: 10
 
   backend:
-    build: ./backend
+    build: ./Backend
     restart: always
     environment:
       DATABASE_URL: "postgresql://postgres:123456@postgres:5432/taskmanager?schema=public"
@@ -29,7 +29,7 @@ services:
         condition: service_healthy
 
   frontend:
-    build: ./frontend
+    build: ./Frontend
     restart: always
     ports:
       - "5173:80"
