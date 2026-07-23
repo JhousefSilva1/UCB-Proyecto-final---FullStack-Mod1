@@ -28,11 +28,9 @@ app.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   if (username === "postgres" && password === "123456") {
-    const token = jwt.sign(
-      { username },
-      SECRET_KEY,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ username }, SECRET_KEY, {
+      expiresIn: "1h",
+    });
 
     return res.json({
       message: "Login successful",
@@ -231,6 +229,10 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+export default app;
