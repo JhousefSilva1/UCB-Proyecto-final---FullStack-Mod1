@@ -24,6 +24,24 @@ app.use(
 
 app.use(express.json());
 
+app.get("/health", async (_req: Request, res: Response) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+
+    return res.status(200).json({
+      status: "ok",
+      database: "connected",
+    });
+  } catch (error) {
+    console.error("Healthcheck failed:", error);
+
+    return res.status(503).json({
+      status: "error",
+      database: "disconnected",
+    });
+  }
+});
+
 app.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
 
@@ -92,11 +110,11 @@ app.get("/tasks", async (_req: Request, res: Response) => {
       },
     });
 
-    res.json(tasks);
+    return res.json(tasks);
   } catch (error) {
     console.error("Error getting tasks:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to fetch tasks",
     });
   }
@@ -122,11 +140,11 @@ app.post("/tasks", async (req: Request, res: Response) => {
       },
     });
 
-    res.status(201).json(newTask);
+    return res.status(201).json(newTask);
   } catch (error) {
     console.error("Error creating task:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to create task",
     });
   }
@@ -161,11 +179,11 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
       },
     });
 
-    res.json(updatedTask);
+    return res.json(updatedTask);
   } catch (error) {
     console.error("Error updating task:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to update task",
     });
   }
@@ -192,11 +210,11 @@ app.patch("/tasks/:id/toggle", async (req: Request, res: Response) => {
       },
     });
 
-    res.json(updatedTask);
+    return res.json(updatedTask);
   } catch (error) {
     console.error("Error toggling task:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to toggle task",
     });
   }
@@ -220,13 +238,13 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
       where: { id },
     });
 
-    res.json({
+    return res.json({
       message: "Task deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting task:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Failed to delete task",
     });
   }
