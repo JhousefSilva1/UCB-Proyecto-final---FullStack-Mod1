@@ -8,7 +8,7 @@ import "dotenv/config";
 
 const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
 const app = express();
-const PORT = 4001;
+const PORT = Number(process.env.PORT) || 4000;
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -106,7 +106,7 @@ app.post("/tasks", async (req: Request, res: Response) => {
   try {
     const { title, completed } = req.body;
 
-    if (!title || title.trim() === "") {
+    if (typeof title !== "string" || title.trim() === "") {
       return res.status(400).json({
         message: "Title is required",
       });
@@ -115,7 +115,10 @@ app.post("/tasks", async (req: Request, res: Response) => {
     const newTask = await prisma.task.create({
       data: {
         title: title.trim(),
-        completed: completed ?? false,
+        completed:
+          typeof completed === "boolean"
+            ? completed
+            : false,
       },
     });
 
@@ -148,11 +151,11 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
       where: { id },
       data: {
         title:
-          title !== undefined && title.trim() !== ""
+          typeof title === "string" && title.trim() !== ""
             ? title.trim()
             : existingTask.title,
         completed:
-          completed !== undefined
+          typeof completed === "boolean"
             ? completed
             : existingTask.completed,
       },
