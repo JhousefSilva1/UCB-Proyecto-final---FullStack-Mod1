@@ -85,11 +85,97 @@ jobs:
       - name: Compilar backend
         run: npm run build
 
-  e2e:
-    name: E2E - Playwright
+  docker-compose:
+    name: Docker Compose - 3 servicios
     needs:
       - frontend
       - backend
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Levantar los tres servicios
+        run: docker compose up --build -d
+
+      - name: Esperar a PostgreSQL
+        run: |
+          for i in {1..30}; do
+            if docker compose exec -T postgres \
+              pg_isready -U postgres -d taskmanager; then
+              echo "PostgreSQL disponible"
+              exit 0
+            fi
+
+            echo "Esperando PostgreSQL..."
+            sleep 3
+          done
+
+          echo "PostgreSQL no respondió"
+          docker compose logs postgres
+          exit 1
+
+      - name: Esperar al Backend
+        run: |
+          for i in {1..30}; do
+            if curl --fail http://localhost:4001/; then
+              echo "Backend disponible"
+              exit 0
+            fi
+
+            echo "Esperando al backend..."
+            sleep 3
+          done
+
+          echo "El backend no respondió"
+          docker compose logs backend
+          exit 1
+
+      - name: Esperar al Frontend
+        run: |
+          for i in {1..30}; do
+            if curl --fail http://localhost:5173/; then
+              echo "Frontend disponible"
+              exit 0
+            fi
+
+            echo "Esperando al frontend..."
+            sleep 3
+          done
+
+          echo "El frontend no respondió"
+          docker compose logs frontend
+          exit 1
+
+      - name: Mostrar servicios activos
+        run: docker compose ps
+
+      - name: Verificar que existan tres servicios activos
+        run: |
+          RUNNING_SERVICES=$(docker compose ps --services --status running | wc -l)
+
+          echo "Servicios activos: $RUNNING_SERVICES"
+
+          if [ "$RUNNING_SERVICES" -ne 3 ]; then
+            echo "Se esperaban 3 servicios activos"
+            docker compose ps
+            exit 1
+          fi
+
+      - name: Mostrar logs si falla
+        if: failure()
+        run: docker compose logs
+
+      - name: Detener servicios
+        if: always()
+        run: docker compose down -v
+
+  e2e:
+    name: E2E - Playwright
+    needs:
+      - docker-compose
 
     runs-on: ubuntu-latest
 
@@ -156,11 +242,16 @@ jobs:
         if: failure()
         run: docker compose logs
 
+      - name: Detener servicios
+        if: always()
+        run: docker compose down -v
+
   deploy-staging:
     name: Deploy a Staging
     needs:
       - frontend
       - backend
+      - docker-compose
       - e2e
 
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -183,6 +274,7 @@ jobs:
     needs:
       - frontend
       - backend
+      - docker-compose
       - e2e
 
     if: github.event_name == 'workflow_dispatch' && inputs.confirmacion == 'DEPLOY'
