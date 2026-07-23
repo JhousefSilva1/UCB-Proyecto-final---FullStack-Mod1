@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 declare const process: {
   env: {
     CI?: string;
+    VITE_API_URL?: string;
   };
 };
 
@@ -20,6 +21,7 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:5173",
     trace: "on-first-retry",
+    screenshot: "only-on-failure",
   },
 
   projects: [
@@ -34,6 +36,10 @@ export default defineConfig({
   webServer: {
     command: "npm run dev -- --host localhost",
     url: "http://localhost:5173",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
+    env: {
+      ...process.env,
+      VITE_API_URL: "http://localhost:4001",
+    },
   },
 });
