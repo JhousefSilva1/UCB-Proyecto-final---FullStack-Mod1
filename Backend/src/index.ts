@@ -5,38 +5,46 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+
 const SECRET_KEY = process.env.JWT_SECRET || "mi_clave_secreta";
 const app = express();
 const PORT = 4001;
+
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
 
 const prisma = new PrismaClient({ adapter });
+
 app.use(
   cors({
     origin: "http://localhost:5173",
   })
 );
+
 app.use(express.json());
+
 app.post("/login", (req: Request, res: Response) => {
   const { username, password } = req.body;
 
   if (username === "postgres" && password === "123456") {
     const token = jwt.sign(
-      { username: username },
+      { username },
       SECRET_KEY,
       { expiresIn: "1h" }
     );
+
     return res.json({
       message: "Login successful",
       token,
     });
   }
+
   return res.status(401).json({
     message: "Invalid credentials",
   });
 });
+
 const verifyToken = (
   req: Request,
   res: Response,
@@ -61,12 +69,13 @@ const verifyToken = (
   try {
     jwt.verify(token, SECRET_KEY);
     next();
-  } catch (error) {
+  } catch {
     return res.status(403).json({
       message: "Invalid or expired token",
     });
   }
 };
+
 app.get("/", (_req: Request, res: Response) => {
   res.send("Backend is working!");
 });
@@ -76,6 +85,7 @@ app.get("/private", verifyToken, (_req: Request, res: Response) => {
     message: "Acceso permitido",
   });
 });
+
 app.get("/tasks", async (_req: Request, res: Response) => {
   try {
     const tasks = await prisma.task.findMany({
@@ -87,6 +97,7 @@ app.get("/tasks", async (_req: Request, res: Response) => {
     res.json(tasks);
   } catch (error) {
     console.error("Error getting tasks:", error);
+
     res.status(500).json({
       message: "Failed to fetch tasks",
     });
@@ -113,6 +124,7 @@ app.post("/tasks", async (req: Request, res: Response) => {
     res.status(201).json(newTask);
   } catch (error) {
     console.error("Error creating task:", error);
+
     res.status(500).json({
       message: "Failed to create task",
     });
@@ -142,13 +154,16 @@ app.put("/tasks/:id", async (req: Request, res: Response) => {
             ? title.trim()
             : existingTask.title,
         completed:
-          completed !== undefined ? completed : existingTask.completed,
+          completed !== undefined
+            ? completed
+            : existingTask.completed,
       },
     });
 
     res.json(updatedTask);
   } catch (error) {
     console.error("Error updating task:", error);
+
     res.status(500).json({
       message: "Failed to update task",
     });
@@ -179,6 +194,7 @@ app.patch("/tasks/:id/toggle", async (req: Request, res: Response) => {
     res.json(updatedTask);
   } catch (error) {
     console.error("Error toggling task:", error);
+
     res.status(500).json({
       message: "Failed to toggle task",
     });
@@ -208,6 +224,7 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error deleting task:", error);
+
     res.status(500).json({
       message: "Failed to delete task",
     });
